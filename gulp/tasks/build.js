@@ -8,7 +8,6 @@ var gulp = require('gulp'),
 	browserSync = require('browser-sync').create();
 
 gulp.task("previewDist", function() {
-
 	browserSync.init({
 		notify: false,
 		server: {
@@ -19,6 +18,21 @@ gulp.task("previewDist", function() {
 
 gulp.task("deleteDistFolder", ['icons'] ,function() {
 	return del("./dist")
+});
+
+gulp.task('copyGeneralFiles', ['deleteDistFolder'], function() {
+	var pathsToCopy = [
+		'./app/**/*',
+		'!./app/index.html',
+		'!./app/assets/images/**',
+		'./app/assets/styles/**',
+		'!./app/assets/scripts/**',
+		'!./app/temp',
+		'!./app/temp/**'
+	]
+
+	return gulp.src(pathsToCopy)
+		pipe(gulp.dest('./dist'));
 });
 
 gulp.task("optimizeImages", ['deleteDistFolder'], function() {
@@ -44,4 +58,4 @@ gulp.task("usemin", ['styles', 'scripts'], function() {
 		.pipe(gulp.dest("./dist"));
 });
 
-gulp.task("build", ['deleteDistFolder', 'optimizeImages', 'useminTrigger']);
+gulp.task("build", ['deleteDistFolder', 'copyGeneralFiles','optimizeImages', 'useminTrigger']);
